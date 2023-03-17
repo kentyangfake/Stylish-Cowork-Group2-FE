@@ -243,7 +243,7 @@ const categories = [
 
 function Header() {
   const [inputValue, setInputValue] = useState('');
-  const { user } = useContext(AuthContext)
+  const { user,isLogin } = useContext(AuthContext)
   const { cartCount } = useContext(CartContext);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -283,7 +283,7 @@ function Header() {
         value={inputValue}
       />
       <PageLinks>
-        <PageLink to="/checkout">
+        <PageLink to={ isLogin ? "/checkout" : "/profile"}>
           <PageLinkCartIcon icon={cart}>
             <PageLinkIconNumber>{cartCount}</PageLinkIconNumber>
           </PageLinkCartIcon>
