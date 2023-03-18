@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import api from '../../utils/api';
 import tappay from '../../utils/tappay';
@@ -12,7 +12,7 @@ import Cart from './Cart';
 const Wrapper = styled.div`
   margin: 0 auto;
   padding: 47px 0 263px;
-  max-width: 1160px;
+  max-width: 1280px;
   line-height: 19px;
   font-size: 16px;
   color: #3f3a3a;
@@ -210,21 +210,22 @@ const SubtotalPrice = styled(Price)`
 
 const ShippingPrice = styled(Price)`
   margin-top: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #3f3a3a;
+  
 
   @media screen and (max-width: 1279px) {
     margin-top: 20px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #3f3a3a;
+    
   }
 `;
 
 const TotalPrice = styled(Price)`
   margin-top: 20px;
-
+  padding-top:24px;
+  border-top: 1px solid #3f3a3a;
   @media screen and (max-width: 1279px) {
     margin-top: 16px;
+    padding-top:20px;
+    border-top: 1px solid #3f3a3a;
   }
 `;
 
@@ -238,19 +239,37 @@ const PriceName = styled.div`
     font-size: 14px;
   }
 `;
-
+const RedPriceName = styled(PriceName)`
+  color: red;
+`;
+const GreenPriceName = styled(PriceName)`
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+`;
 const Currency = styled.div`
   margin-left: auto;
   line-height: 19px;
   font-size: 16px;
   color: #3f3a3a;
 `;
-
+const RedCurrency = styled(Currency)`
+  color: red;
+`;
+const GreenCurrency = styled(Currency)`
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+`;
 const PriceValue = styled.div`
   line-height: 36px;
   margin-left: 10px;
   font-size: 30px;
   color: #3f3a3a;
+`;
+const GreenPriceValue = styled(PriceValue)`
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+`
+
+const DiscountValue = styled(PriceValue)`
+  font-size: 22px;
+  color: red;
 `;
 
 const formInputs = [
@@ -279,6 +298,171 @@ const timeOptions = [
   },
 ];
 
+const user = {
+  "data": {
+    "provider": "native",
+    "name": "admin",
+    "email": "admin@gmail.com",
+    "picture": null,
+    "activity": [
+      {
+        "id": 1,
+        "name": "限時折扣",
+        "description": "光棍節最新優惠",
+        "start_date": "2023-03-17",
+        "expire_date": "2023-06-17",
+        "day_left": 90,
+        "discount": 200,
+        "category": "activity",
+        "minimum": 1000,
+        "product_category": "all"
+      },
+      {
+        "id": 2,
+        "name": "年終促銷",
+        "description": "光棍節最新優惠",
+        "start_date": "2023-03-17",
+        "expire_date": "2023-06-17",
+        "day_left": 90,
+        "discount": 500,
+        "category": "activity",
+        "minimum": 1000,
+        "product_category": "all"
+      },
+      {
+        "id": 3,
+        "name": "跳樓拍賣卷",
+        "description": "光棍節最新優惠",
+        "start_date": "2023-03-17",
+        "expire_date": "2023-06-17",
+        "day_left": 90,
+        "discount": 100,
+        "category": "activity",
+        "minimum": 1000,
+        "product_category": "all"
+      },
+            {
+        "id": 7,
+        "name": "跳樓拍賣卷",
+        "description": "光棍節最新優惠",
+        "start_date": "2023-03-17",
+        "expire_date": "2023-06-17",
+        "day_left": 90,
+        "discount": 100,
+        "category": "activity",
+        "minimum": 1000,
+        "product_category": "all"
+      },
+    ],
+    "delivery": [
+      {
+        "id": 4,
+        "name": "限時免運券！",
+        "description": "年終最新優惠",
+        "start_date": "2023-03-17",
+        "expire_date": "2023-03-27",
+        "day_left": 10,
+        "discount": 30,
+        "minimum": 0,
+        "product_category": "all",
+        "total": 4000
+      },
+      {
+        "id": 5,
+        "name": "免運券！",
+        "description": "年終最新優惠",
+        "start_date": "2023-04-17",
+        "expire_date": "2023-04-27",
+        "day_left": 10,
+        "discount": 30,
+        "minimum": 0,
+        "product_category": "all",
+        "total": 4000
+      },
+      {
+        "id": 6,
+        "name": "免運券！",
+        "description": "年終最新優惠",
+        "start_date": "2023-04-17",
+        "expire_date": "2023-04-27",
+        "day_left": 10,
+        "discount": 30,
+        "minimum": 0,
+        "product_category": "all",
+        "total": 4000
+      }
+    ],
+    "points": 50,
+    "level": "鑽石",
+    "promo_link": "AJEKGE",
+    "accumulate": 2450
+  }
+}
+
+const CounponSet = styled.div`
+  display:flex;
+  gap:20px;
+  @media screen and (max-width: 1279px) {
+    flex-direction:column
+  }
+`
+const CounponGroup = styled.div`
+  display:flex;
+  flex-wrap:wrap;
+  max-width: 750px;
+  gap:15px;
+  margin-top:15px;
+  @media screen and (max-width: 1279px) {
+    max-width: 100%;
+    justify-items:center;
+  }
+`;
+const DeliveryGroup = styled(CounponGroup)`
+  width: 510px;
+
+@media screen and (max-width: 1279px) {
+  width: 100%;
+}
+`
+const Counpon = styled.div`
+  display:flex;
+  justify-content:space-between;
+  width:230px;
+  height:100px;
+  padding:5px;
+  border: 1px solid lightgray;
+  border-radius:10px;
+  @media screen and (max-width: 1279px) {
+  width: 290px;
+}
+`
+const CounponTitle = styled.div`
+  display:flex;
+  flex-direction:column;
+  background-color:${({ category }) => category === 'delivery' ? 'green' : 'red'};
+  border-radius:5px;
+  height:100%;
+`
+const CounponContext = styled.div`
+  display:flex;
+  flex-direction:column;
+  height:100%;
+`
+const CounponDiscount = styled.div`
+  display:flex;
+  align-items:center;
+  justify-items:center;
+  padding-top:10px;
+  writing-mode:vertical-lr;
+  font-weight:700;
+  font-size:25px;
+  height:100%;
+`
+const CounponText = styled.span`
+  font-size:12px;
+`
+
+
 function Checkout() {
   const [recipient, setRecipient] = useState({
     name: '',
@@ -297,6 +481,14 @@ function Checkout() {
 
   const { jwtToken, isLogin, login } = useContext(AuthContext);
   const { cartItems, setCartItems } = useContext(CartContext);
+  const [discount,setDiscount] = useState({
+    name:'',
+    price:0,
+  });
+  const [deliverFee,setDeliverFee] = useState({
+    name:'運費',
+    price:0,
+  });
 
   useEffect(() => {
     const setupTappay = async () => {
@@ -362,7 +554,7 @@ function Checkout() {
             payment: 'credit_card',
             subtotal,
             freight,
-            total: subtotal + freight,
+            total: subtotal + freight - discount.price - deliverFee.price,
             recipient,
             list: cartItems,
           },
@@ -377,6 +569,20 @@ function Checkout() {
     } finally {
       setLoading(false);
     }
+  }
+
+  const Discount = () => {
+    if (discount.price === 0){
+      return
+    }
+
+    return(
+      <ShippingPrice>
+        <RedPriceName>{discount.name}</RedPriceName>
+        <RedCurrency>NT.</RedCurrency>
+        <DiscountValue>-{discount.price}</DiscountValue>
+      </ShippingPrice>
+    );
   }
 
   return (
@@ -446,20 +652,77 @@ function Checkout() {
           </FormGroup>
         </FormFieldSet>
       </form>
+      <CounponSet>
+        <FormFieldSet>
+          <FormLegend>我的折價券</FormLegend>
+          <CounponGroup>
+          {user.data.activity.map((counpon) => (
+            <Counpon key={counpon.id} onClick={()=>{
+              setDiscount({
+                name:counpon.name,
+                price:counpon.discount,
+              })
+            }}>
+              <CounponTitle category={'activity'}>折價券</CounponTitle>
+                <CounponContext>
+                  <CounponText>
+                    {counpon.name}
+                  </CounponText>
+                  <CounponText>
+                    {counpon.description}
+                  </CounponText>
+                  <CounponText>
+                    {counpon.expire_date}
+                  </CounponText>
+                </CounponContext>
+              <CounponDiscount CounponDiscount>$ {counpon.discount}</CounponDiscount>
+            </Counpon>
+          ))}
+          </CounponGroup>
+        </FormFieldSet>
+        <FormFieldSet>
+          <FormLegend>我的免運券</FormLegend>
+          <DeliveryGroup>
+          {user.data.delivery.map((counpon) => (
+            <Counpon key={counpon.id} onClick={()=>{
+              setDeliverFee({
+                name:counpon.name,
+                price:counpon.discount,
+              })
+            }}>
+              <CounponTitle category={'delivery'}>免運券</CounponTitle>
+                <CounponContext>
+                  <CounponText>
+                    {counpon.name}
+                  </CounponText>
+                  <CounponText>
+                    {counpon.description}
+                  </CounponText>
+                  <CounponText>
+                    {counpon.expire_date}
+                  </CounponText>
+                </CounponContext>
+              <CounponDiscount>$ {counpon.discount}</CounponDiscount>
+            </Counpon>
+          ))}
+          </DeliveryGroup>
+        </FormFieldSet>
+      </CounponSet>
       <SubtotalPrice>
         <PriceName>總金額</PriceName>
         <Currency>NT.</Currency>
         <PriceValue>{subtotal}</PriceValue>
       </SubtotalPrice>
       <ShippingPrice>
-        <PriceName>運費</PriceName>
-        <Currency>NT.</Currency>
-        <PriceValue>{freight}</PriceValue>
+        <GreenPriceName freightDiscount={deliverFee.price}>{deliverFee.name}</GreenPriceName>
+        <GreenCurrency freightDiscount={deliverFee.price}>NT.</GreenCurrency>
+        <GreenPriceValue freightDiscount={deliverFee.price}>{freight - deliverFee.price}</GreenPriceValue>
       </ShippingPrice>
+      <Discount />
       <TotalPrice>
         <PriceName>應付金額</PriceName>
         <Currency>NT.</Currency>
-        <PriceValue>{subtotal + freight}</PriceValue>
+        <PriceValue>{subtotal + freight - discount.price - deliverFee.price}</PriceValue>
       </TotalPrice>
       <Button loading={loading} onClick={checkout}>確認付款</Button>
     </Wrapper>
