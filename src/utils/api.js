@@ -50,6 +50,10 @@ const api = {
     });
     return await response.json();
   },
+  async getCoupons() {
+    const response = await fetch(`${this.hostname}/marketing/coupons`);
+    return await response.json();
+  },
 };
 
 export default api;
