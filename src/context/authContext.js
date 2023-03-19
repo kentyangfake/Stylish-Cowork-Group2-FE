@@ -43,7 +43,14 @@ export const AuthContextProvider = ({ children }) => {
       if (response.status === 'connected') {
         handleLoginResponse(response);
         setLoading(false);
-      } else {
+      } 
+      // else if (window.localStorage.getItem('jwtToken') !== null ) {
+      //   const {data} = await api.getProfile(window.localStorage.getItem('jwtToken'));
+      //   setUser(data);
+      //   setIsLogin(true);
+      //   setLoading(false);
+      // } 
+      else {
         window.localStorage.removeItem('jwtToken');
         setLoading(false);
       }

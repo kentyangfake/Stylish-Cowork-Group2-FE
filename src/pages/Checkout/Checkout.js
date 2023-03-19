@@ -282,7 +282,7 @@ const CouponSet = styled.div`
 const CouponGroup = styled.div`
   display:flex;
   flex-wrap:wrap;
-  max-width: 750px;
+  width: 750px;
   gap:15px;
   margin-top:15px;
   @media screen and (max-width: 1279px) {
@@ -391,7 +391,6 @@ function Checkout() {
   });
 
   const [userProfile, setUserProfile] = useState();
-  // console.log(userProfile);
 
   useEffect(()=>{
     const getUserProfile = async () => {
@@ -581,7 +580,7 @@ function Checkout() {
         <FormFieldSet>
           <FormLegend>我的折價券</FormLegend>
           <CouponGroup>
-          {userProfile.data.activity.map((coupon) => (
+          {userProfile.data.activity.length !== 0? userProfile.data.activity.map((coupon) => (
             <Coupon key={coupon.id} onClick={()=>{
               setDiscount({
                 name:coupon.name,
@@ -603,13 +602,13 @@ function Checkout() {
                 </CouponContext>
               <CouponDiscount>$ {coupon.discount}</CouponDiscount>
             </Coupon>
-          ))}
+          )) : <p>可憐,沒有任何券</p>}
           </CouponGroup>
         </FormFieldSet>
         <FormFieldSet>
           <FormLegend>我的免運券</FormLegend>
           <DeliveryGroup>
-          {userProfile.data.delivery.map((coupon) => (
+          {userProfile.data.delivery.length !== 0? userProfile.data.delivery.map((coupon) => (
             <Coupon key={coupon.id} onClick={()=>{
               setDeliverDiscount({
                 name:coupon.name,
@@ -631,7 +630,7 @@ function Checkout() {
                 </CouponContext>
               <CouponDiscount>$ {coupon.discount}</CouponDiscount>
             </Coupon>
-          ))}
+          )) : <p>可憐,沒有任何券</p>}
           </DeliveryGroup>
         </FormFieldSet>
       </CouponSet>
