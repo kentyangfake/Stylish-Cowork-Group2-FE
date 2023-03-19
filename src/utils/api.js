@@ -1,5 +1,5 @@
 const api = {
-  hostname: 'https://api.appworks-school.tw/api/1.0',
+  hostname: 'https://www.danielchou.online/api/1.0',
   async getProducts(category, paging) {
     const response = await fetch(
       `${this.hostname}/products/${category}?paging=${paging}`
@@ -48,6 +48,10 @@ const api = {
         Authorization: `Bearer ${jwtToken}`,
       }),
     });
+    return await response.json();
+  },
+  async getCoupons() {
+    const response = await fetch(`${this.hostname}/marketing/coupons`);
     return await response.json();
   },
 };

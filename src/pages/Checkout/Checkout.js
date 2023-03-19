@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import api from '../../utils/api';
 import tappay from '../../utils/tappay';
@@ -12,7 +12,7 @@ import Cart from './Cart';
 const Wrapper = styled.div`
   margin: 0 auto;
   padding: 47px 0 263px;
-  max-width: 1160px;
+  max-width: 1280px;
   line-height: 19px;
   font-size: 16px;
   color: #3f3a3a;
@@ -210,21 +210,22 @@ const SubtotalPrice = styled(Price)`
 
 const ShippingPrice = styled(Price)`
   margin-top: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #3f3a3a;
+  
 
   @media screen and (max-width: 1279px) {
     margin-top: 20px;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #3f3a3a;
+    
   }
 `;
 
 const TotalPrice = styled(Price)`
   margin-top: 20px;
-
+  padding-top:24px;
+  border-top: 1px solid #3f3a3a;
   @media screen and (max-width: 1279px) {
     margin-top: 16px;
+    padding-top:20px;
+    border-top: 1px solid #3f3a3a;
   }
 `;
 
@@ -238,20 +239,101 @@ const PriceName = styled.div`
     font-size: 14px;
   }
 `;
-
+const RedPriceName = styled(PriceName)`
+  color: red;
+`;
+const GreenPriceName = styled(PriceName)`
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+`;
 const Currency = styled.div`
   margin-left: auto;
   line-height: 19px;
   font-size: 16px;
   color: #3f3a3a;
 `;
-
+const RedCurrency = styled(Currency)`
+  color: red;
+`;
+const GreenCurrency = styled(Currency)`
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+`;
 const PriceValue = styled.div`
   line-height: 36px;
   margin-left: 10px;
   font-size: 30px;
   color: #3f3a3a;
 `;
+const GreenPriceValue = styled(PriceValue)`
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+`
+
+const DiscountValue = styled(PriceValue)`
+  font-size: 22px;
+  color: red;
+`;
+
+const CouponSet = styled.div`
+  display:flex;
+  gap:20px;
+  @media screen and (max-width: 1279px) {
+    flex-direction:column
+  }
+`
+const CouponGroup = styled.div`
+  display:flex;
+  flex-wrap:wrap;
+  max-width: 750px;
+  gap:15px;
+  margin-top:15px;
+  @media screen and (max-width: 1279px) {
+    max-width: 100%;
+    justify-items:center;
+  }
+`;
+const DeliveryGroup = styled(CouponGroup)`
+  width: 510px;
+
+@media screen and (max-width: 1279px) {
+  width: 100%;
+}
+`
+const Coupon = styled.div`
+  display:flex;
+  justify-content:space-between;
+  width:230px;
+  height:100px;
+  padding:5px;
+  border: 1px solid lightgray;
+  border-radius:10px;
+  @media screen and (max-width: 1279px) {
+  width: 290px;
+}
+`
+const CouponTitle = styled.div`
+  display:flex;
+  flex-direction:column;
+  background-color:${({ category }) => category === 'delivery' ? 'green' : 'red'};
+  border-radius:5px;
+  height:100%;
+`
+const CouponContext = styled.div`
+  display:flex;
+  flex-direction:column;
+  height:100%;
+`
+const CouponDiscount = styled.div`
+  display:flex;
+  align-items:center;
+  justify-items:center;
+  padding-top:10px;
+  writing-mode:vertical-lr;
+  font-weight:700;
+  font-size:25px;
+  height:100%;
+`
+const CouponText = styled.span`
+  font-size:12px;
+`
 
 const formInputs = [
   {
@@ -297,6 +379,31 @@ function Checkout() {
 
   const { jwtToken, isLogin, login } = useContext(AuthContext);
   const { cartItems, setCartItems } = useContext(CartContext);
+  const [ discount, setDiscount ] = useState({
+    name:'',
+    price:0,
+    id:null,
+  });
+  const [ deliverDiscount, setDeliverDiscount ] = useState({
+    name:'運費',
+    price:0,
+    id:null,
+  });
+
+  const [userProfile, setUserProfile] = useState();
+  // console.log(userProfile);
+
+  useEffect(()=>{
+    const getUserProfile = async () => {
+      if(!jwtToken){
+        return
+      }
+      const data = await api.getProfile(jwtToken);
+      console.log(data);
+      setUserProfile(data);
+    }
+    getUserProfile();
+  }, [jwtToken]);
 
   useEffect(() => {
     const setupTappay = async () => {
@@ -309,6 +416,10 @@ function Checkout() {
     }
     setupTappay();
   }, []);
+
+  if (!userProfile) {
+    return
+  }
 
   const subtotal = cartItems.reduce(
     (prev, item) => prev + item.price * item.qty,
@@ -358,11 +469,17 @@ function Checkout() {
         {
           prime: result.card.prime,
           order: {
+            user_id: userProfile.user_id,
             shipping: 'delivery',
             payment: 'credit_card',
             subtotal,
             freight,
-            total: subtotal + freight,
+            activity_id: discount.id,
+            activity_discount: discount.price,
+            delivery_id: deliverDiscount.id,
+            delivery_discount: deliverDiscount.price,
+            used_points: 0,
+            total: subtotal + freight - discount.price - deliverDiscount.price,
             recipient,
             list: cartItems,
           },
@@ -377,6 +494,20 @@ function Checkout() {
     } finally {
       setLoading(false);
     }
+  }
+
+  const Discount = () => {
+    if (discount.price === 0){
+      return
+    }
+
+    return(
+      <ShippingPrice>
+        <RedPriceName>{discount.name}</RedPriceName>
+        <RedCurrency>NT.</RedCurrency>
+        <DiscountValue>-{discount.price}</DiscountValue>
+      </ShippingPrice>
+    );
   }
 
   return (
@@ -446,20 +577,79 @@ function Checkout() {
           </FormGroup>
         </FormFieldSet>
       </form>
+      <CouponSet>
+        <FormFieldSet>
+          <FormLegend>我的折價券</FormLegend>
+          <CouponGroup>
+          {userProfile.data.activity.map((coupon) => (
+            <Coupon key={coupon.id} onClick={()=>{
+              setDiscount({
+                name:coupon.name,
+                price:coupon.discount,
+                id:coupon.id,
+              })
+            }}>
+              <CouponTitle category={'activity'}>折價券</CouponTitle>
+                <CouponContext>
+                  <CouponText>
+                    {coupon.name}
+                  </CouponText>
+                  <CouponText>
+                    {coupon.description}
+                  </CouponText>
+                  <CouponText>
+                    {coupon.expire_date}
+                  </CouponText>
+                </CouponContext>
+              <CouponDiscount>$ {coupon.discount}</CouponDiscount>
+            </Coupon>
+          ))}
+          </CouponGroup>
+        </FormFieldSet>
+        <FormFieldSet>
+          <FormLegend>我的免運券</FormLegend>
+          <DeliveryGroup>
+          {userProfile.data.delivery.map((coupon) => (
+            <Coupon key={coupon.id} onClick={()=>{
+              setDeliverDiscount({
+                name:coupon.name,
+                price:coupon.discount,
+                id:coupon.id,
+              })
+            }}>
+              <CouponTitle category={'delivery'}>免運券</CouponTitle>
+                <CouponContext>
+                  <CouponText>
+                    {coupon.name}
+                  </CouponText>
+                  <CouponText>
+                    {coupon.description}
+                  </CouponText>
+                  <CouponText>
+                    {coupon.expire_date}
+                  </CouponText>
+                </CouponContext>
+              <CouponDiscount>$ {coupon.discount}</CouponDiscount>
+            </Coupon>
+          ))}
+          </DeliveryGroup>
+        </FormFieldSet>
+      </CouponSet>
       <SubtotalPrice>
         <PriceName>總金額</PriceName>
         <Currency>NT.</Currency>
         <PriceValue>{subtotal}</PriceValue>
       </SubtotalPrice>
       <ShippingPrice>
-        <PriceName>運費</PriceName>
-        <Currency>NT.</Currency>
-        <PriceValue>{freight}</PriceValue>
+        <GreenPriceName freightDiscount={deliverDiscount.price}>{deliverDiscount.name}</GreenPriceName>
+        <GreenCurrency freightDiscount={deliverDiscount.price}>NT.</GreenCurrency>
+        <GreenPriceValue freightDiscount={deliverDiscount.price}>{freight - deliverDiscount.price}</GreenPriceValue>
       </ShippingPrice>
+      <Discount />
       <TotalPrice>
         <PriceName>應付金額</PriceName>
         <Currency>NT.</Currency>
-        <PriceValue>{subtotal + freight}</PriceValue>
+        <PriceValue>{subtotal + freight - discount.price - deliverDiscount.price}</PriceValue>
       </TotalPrice>
       <Button loading={loading} onClick={checkout}>確認付款</Button>
     </Wrapper>

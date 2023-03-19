@@ -58,7 +58,7 @@ function Profile() {
   }
   return (
     <Wrapper>
-      <Title>會員基本資訊</Title>
+      <Title>{isLogin?'會員基本資訊':'請先登入'}</Title>
       {renderContent()}
     </Wrapper>
   );
