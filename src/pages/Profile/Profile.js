@@ -1,4 +1,5 @@
 import { useContext, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import ReactLoading from 'react-loading';
 import api from '../../utils/api';
@@ -108,6 +109,12 @@ const LogoutButton = styled.button`
 const Loading = styled(ReactLoading)`
   margin-top: 50px;
 `;
+const BackEndButton = styled(Link)`
+  width:100px;
+  height: 50px;
+  background-color:gray;
+  margin-top: 24px;
+`;
 
 function Profile() {
   const { user, isLogin, login, logout, loading, jwtToken } = useContext(AuthContext);
@@ -132,6 +139,7 @@ function Profile() {
         <Photo src={user.picture} />
         <Content>{user.name}</Content>
         <Content>{user.email}</Content>
+        <BackEndButton to="/backend">Coupon管理後台</BackEndButton>
         <LogoutButton
           onClick={logout}
         >

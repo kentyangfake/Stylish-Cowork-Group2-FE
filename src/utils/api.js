@@ -54,6 +54,17 @@ const api = {
     const response = await fetch(`${this.hostname}/marketing/coupons`);
     return await response.json();
   },
+  async addCoupon(data, jwtToken) {
+    const response = await fetch(`${this.hostname}/admin/coupon`, {
+      body: JSON.stringify(data),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      }),
+      method: 'POST',
+    });
+    return await response.json();
+  },
 };
 
 export default api;
