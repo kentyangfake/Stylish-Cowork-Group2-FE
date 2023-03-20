@@ -56,40 +56,57 @@ const DeliveryGroup = styled(CouponGroup)`
 `
 const Coupon = styled.div`
   display:flex;
-  justify-content:space-between;
+  justify-content: space-between;
   width:230px;
   height:100px;
-  padding:5px;
-  border: 1px solid lightgray;
-  border-radius:10px;
+  background-color: #F9F2ED;
   @media screen and (max-width: 1279px) {
   width: 290px;
 }
 `
-const CouponTitle = styled.div`
-  display:flex;
-  flex-direction:column;
-  background-color:${({ category }) => category === 'delivery' ? 'green' : 'red'};
-  border-radius:5px;
-  height:100%;
-`
 const CouponContext = styled.div`
   display:flex;
+  justify-content:center;
+  align-items:center;
   flex-direction:column;
+  width:70%;
   height:100%;
 `
 const CouponDiscount = styled.div`
   display:flex;
   align-items:center;
   justify-items:center;
+  flex-wrap:wrap;
   padding-top:10px;
+  color:#F9F2ED;
   writing-mode:vertical-lr;
   font-weight:700;
   font-size:25px;
   height:100%;
+  width:30%;
+  border-left: 2px dotted #F9F2ED;
+  background-color:${({ category }) => category === 'delivery' ? '#00B29D' : '#F87474'};
+`
+const CouponTitle = styled.span`
+  font-size:20px;
+  font-weight:700;
+  padding-bottom:10px;
+  border-bottom:1px solid #3f3a3a;
+  margin-bottom:5px;
 `
 const CouponText = styled.span`
+  line-height: 19px;
   font-size:12px;
+`
+const CouponDate = styled(CouponText)`
+  font-weight:600;
+  padding-left:5px;
+`
+const CouponLink = styled(Link)`
+  color:#F9F2ED;
+  font-weight:400;
+  font-size:12px;
+  text-decoration: none;
 `
 const Title = styled.div`
   padding-bottom: 16px;
@@ -225,19 +242,19 @@ function Profile() {
           <CouponGroup>
           {userProfile.data.activity.length !== 0? userProfile.data.activity.map((coupon) => (
             <Coupon key={coupon.id}>
-              <CouponTitle category={'activity'}>折價券</CouponTitle>
                 <CouponContext>
-                  <CouponText>
+                  <CouponTitle>
                     {coupon.name}
+                  </CouponTitle>
+                  <CouponText>
+                    <CouponText>Valid Until</CouponText>
+                    <CouponDate>{coupon.expire_date}</CouponDate>
                   </CouponText>
                   <CouponText>
                     {coupon.description}
                   </CouponText>
-                  <CouponText>
-                    {coupon.expire_date}
-                  </CouponText>
                 </CouponContext>
-              <CouponDiscount>$ {coupon.discount}</CouponDiscount>
+              <CouponDiscount category={'activity'}>$ {coupon.discount} <CouponLink to='/'> ▸ 去逛逛</CouponLink></CouponDiscount>
             </Coupon>
           )) : <p>可憐,沒有任何券</p>}
           </CouponGroup>
@@ -247,19 +264,19 @@ function Profile() {
           <DeliveryGroup>
           {userProfile.data.delivery.length !== 0? userProfile.data.delivery.map((coupon) => (
             <Coupon key={coupon.id}>
-              <CouponTitle category={'delivery'}>免運券</CouponTitle>
                 <CouponContext>
-                  <CouponText>
+                  <CouponTitle>
                     {coupon.name}
+                  </CouponTitle>
+                  <CouponText>
+                    <CouponText>Valid Until</CouponText>
+                    <CouponDate>{coupon.expire_date}</CouponDate>
                   </CouponText>
                   <CouponText>
                     {coupon.description}
                   </CouponText>
-                  <CouponText>
-                    {coupon.expire_date}
-                  </CouponText>
                 </CouponContext>
-              <CouponDiscount>$ {coupon.discount}</CouponDiscount>
+              <CouponDiscount category={'delivery'}>$ {coupon.discount} <CouponLink to='/'> ▸ 去逛逛</CouponLink></CouponDiscount>
             </Coupon>
           )) : <p>可憐,沒有任何券</p>}
           </DeliveryGroup>
