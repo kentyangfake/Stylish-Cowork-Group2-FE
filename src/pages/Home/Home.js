@@ -6,15 +6,16 @@ import api from '../../utils/api';
 import { AuthContext } from '../../context/authContext';
 import { useNavigate } from 'react-router-dom';
 
-// const Cat = styled.div`
-//   width:100px;
-//   height:100px;
-//   border-radius:50px;
-//   background-color:olive;
-//   position:absolute;
-//   top: ${(props)=> props.position.top};
-//   left: ${(props)=> props.position.left};
-// `
+const Cat = styled.div`
+  width:100px;
+  height:100px;
+  border-radius:50px;
+  background-color:olive;
+  position:absolute;
+  cursor:pointer;
+  top: ${(props)=> props.position.top};
+  left: ${(props)=> props.position.left};
+`
 
 const Scroll = styled.div`
   display: flex;
@@ -60,7 +61,12 @@ const Coupon = styled.div`
   width:200px;
   height:100px;
   margin:5px;
+  cursor: pointer;
   background-color:#F9F2ED;
+  &:hover{
+    cursor: pointer;
+    background-color:white;
+  }
 `
 const CouponContext = styled.div`
   padding-top:10px;
@@ -95,7 +101,7 @@ const CouponDiscount = styled.div`
 
 function Home() {
   const [counpons, setCoupons] = useState();
-  // const [position, setPosition] = useState({ top: "700px", left: "300px" });
+  const [position, setPosition] = useState({ top: "700px", left: "300px" });
   const { user, isLogin, jwtToken } = useContext(AuthContext);
   const navigate = useNavigate();
   console.log(counpons);
@@ -107,16 +113,16 @@ function Home() {
     getCoupons();
   }, []);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     setPosition({
-  //       top: Math.floor(Math.random() * window.innerHeight) + 700 + "px",
-  //       left: Math.floor(Math.random() * window.innerWidth) + "px",
-  //     });
-  //   }, 3000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPosition({
+        top: Math.floor(Math.random() * window.innerHeight) + 700 + "px",
+        left: Math.floor(Math.random() * window.innerWidth) + "px",
+      });
+    }, 3000);
 
-  //   return () => clearInterval(interval);
-  // }, []);
+    return () => clearInterval(interval);
+  }, []);
 
   if (!counpons) {
     return
@@ -127,7 +133,7 @@ function Home() {
       <Carousel />
         <Scroll>
           <ScrollText>
-            限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !!
+            限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 相 愛 相 殺 !!
           </ScrollText>
           <ScrollText>
             限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !!
@@ -162,7 +168,7 @@ function Home() {
           })}
         </CouponBlock>
       <Products />
-      {/* <Cat position={position}/> */}
+      <Cat position={position}/>
     </>
   );
 }

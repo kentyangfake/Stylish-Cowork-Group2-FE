@@ -295,7 +295,7 @@ const DeliveryGroup = styled(CouponGroup)`
 
 @media screen and (max-width: 1279px) {
   width: 100%;
-}
+  }
 `
 const Coupon = styled.div`
   display:flex;
@@ -303,9 +303,14 @@ const Coupon = styled.div`
   width:230px;
   height:100px;
   background-color: #F9F2ED;
+  cursor: pointer;
   @media screen and (max-width: 1279px) {
   width: 290px;
-}
+  }
+  &:hover{
+    background-color:white;
+    border:1px dotted lightgray;
+  }
 `
 const CouponContext = styled.div`
   display:flex;
