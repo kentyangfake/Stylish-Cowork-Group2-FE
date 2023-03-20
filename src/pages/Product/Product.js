@@ -1,10 +1,49 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 import api from '../../utils/api';
 import ProductVariants from './ProductVariants';
+import { AuthContext } from '../../context/authContext';
+import { useNavigate } from 'react-router-dom';
 
+const Cat = styled.div`
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:300px;
+  height:300px;
+  margin-bottom:70px;
+  cursor:pointer;
+`
+const CatImg = styled.img`
+  width:100%;
+  height:100%;
+`
+const CatP = styled.span`
+  position: relative;
+  background-color: #BDB0A4;
+  color: white;
+  font-size:20px;
+  line-height:25px;
+  padding:15px;
+  width:fit-content;
+  border-radius:35px;
+  &:after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 20px solid transparent;
+    border-bottom-color: #BDB0A4;
+    border-top: 0;
+    border-right: 0;
+    margin-left: -10px;
+    margin-top: -20px;
+  }
+`
 const Wrapper = styled.div`
   max-width: 960px;
   margin: 0 auto;
@@ -193,7 +232,10 @@ const Image = styled.img`
 function Product() {
   const [product, setProduct] = useState();
   const { id } = useParams();
+  const { user, isLogin, jwtToken} = useContext(AuthContext);
+  const navigate = useNavigate();
 
+  console.log(product);
   useEffect(() => {
     async function getProduct() {
       const { data } = await api.getProduct(id);
@@ -227,6 +269,7 @@ function Product() {
           <Image src={image} key={index} />
         ))}
       </Images>
+      {product.coupon_id?<Cat onClick={isLogin? () => api.userGetCoupon({user_id:user.id, coupon_id:product.coupon_id}, jwtToken):() => navigate('/profile')}><CatImg src='https://media.tenor.com/uEKZlGV8Ny0AAAAj/cat-cute.gif'/><CatP>被 你 找 到 啦 ~<br/>點 我 領 取 coupon 券 ~</CatP></Cat> : []}
     </Wrapper>
   );
 }

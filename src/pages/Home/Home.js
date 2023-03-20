@@ -7,19 +7,48 @@ import { AuthContext } from '../../context/authContext';
 import { useNavigate } from 'react-router-dom';
 
 const Cat = styled.div`
-  width:100px;
-  height:100px;
-  border-radius:50px;
-  background-color:olive;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:300px;
+  height:300px;
   position:absolute;
   cursor:pointer;
   top: ${(props)=> props.position.top};
   left: ${(props)=> props.position.left};
 `
+const CatImg = styled.img`
+  width:100%;
+  height:100%;
+`
+const CatP = styled.span`
+  position: relative;
+  background-color: #BDB0A4;
+  color: white;
+  font-size:20px;
+  padding:15px;
+  width:fit-content;
+  border-radius:20px;
+  &:after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border: 20px solid transparent;
+    border-bottom-color: #BDB0A4;
+    border-top: 0;
+    border-right: 0;
+    margin-left: -10px;
+    margin-top: -20px;
+  }
+`
 
 const Scroll = styled.div`
   display: flex;
-  background: red;
+  align-items:center;
+  background: #BDB0A4;
   height: 40px;
   width:100%;
 `
@@ -50,6 +79,7 @@ const CouponBlock = styled.div`
   flex-wrap:wrap;
   justify-content:flex-start;
   padding: 20px 60px; 
+  padding-left: 80px;
   height: fit-content;
   width:100%;
   background-color:lightgray;
@@ -104,7 +134,7 @@ function Home() {
   const [position, setPosition] = useState({ top: "700px", left: "300px" });
   const { user, isLogin, jwtToken } = useContext(AuthContext);
   const navigate = useNavigate();
-  console.log(counpons);
+
   useEffect(() => {
     async function getCoupons() {
       const { data } = await api.getCoupons();
@@ -116,10 +146,10 @@ function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setPosition({
-        top: Math.floor(Math.random() * window.innerHeight) + 700 + "px",
+        top: Math.floor(Math.random() * window.innerHeight + window.scrollY/2) + 700 + "px",
         left: Math.floor(Math.random() * window.innerWidth) + "px",
       });
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
@@ -168,7 +198,10 @@ function Home() {
           })}
         </CouponBlock>
       <Products />
-      <Cat position={position}/>
+      <Cat position={position}>
+        <CatImg src='https://media.tenor.com/uEKZlGV8Ny0AAAAj/cat-cute.gif'/>
+        <CatP>邊 逛 街 邊 找 我 吧 ~</CatP>
+      </Cat>
     </>
   );
 }
