@@ -66,6 +66,29 @@ const api = {
     });
     return await response.json();
   },
+  async userGetCoupon(data, jwtToken) {
+    try{
+      const response = await fetch(`${this.hostname}/marketing/coupon`, {
+        body: JSON.stringify(data),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`,
+        }),
+        method: 'POST',
+      });
+      if (response.status === 200) {
+        const status = await response.json();
+        window.alert(status.message);
+        return await status;
+      } else {
+        const error = await response.json();
+        window.alert(error.message);
+        return await error;
+      }
+    } catch (error) {
+      window.alert(error.message);
+    }
+  },
 };
 
 export default api;

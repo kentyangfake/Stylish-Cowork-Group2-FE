@@ -118,15 +118,77 @@ const BackEndButton = styled(Link)`
 
 function Profile() {
   const { user, isLogin, login, logout, loading, jwtToken } = useContext(AuthContext);
-  const [userProfile, setUserProfile] = useState();
-
+  const [userProfile, setUserProfile] = useState({
+    "data": {
+      "provider": "native",
+      "user_id": 230,
+      "role_id": 2,
+      "name": "admin",
+      "email": "admin@gmail.com",
+      "picture": null,
+      "activity": [
+        {
+          "id": 1,
+          "name": "限時200元折扣碼",
+          "description": "光棍節最新優惠",
+          "start_date": "2023-03-17",
+          "expire_date": "2023-06-17",
+          "day_left": 90,
+          "discount": 200,
+          "minimum": 1000,
+          "product_category": "all"
+        },
+        {
+          "id": 3,
+          "name": "新戶50元抵用券",
+          "description": "新戶優惠！！！",
+          "start_date": "2023-03-17",
+          "expire_date": "2023-03-27",
+          "day_left": 10,
+          "discount": 50,
+          "minimum": 0,
+          "product_category": "all"
+        }
+      ],
+      "delivery": [
+        {
+          "id": 2,
+          "name": "限時免運券！",
+          "description": "年終最新優惠",
+          "start_date": "2023-03-17",
+          "expire_date": "2023-03-27",
+          "day_left": 10,
+          "discount": 30,
+          "minimum": 0,
+          "product_category": "all",
+          "total": 4000
+        },
+        {
+          "id": 4,
+          "name": "免運券！",
+          "description": "年終最新優惠",
+          "start_date": "2023-04-17",
+          "expire_date": "2023-04-27",
+          "day_left": 10,
+          "discount": 30,
+          "minimum": 0,
+          "product_category": "all",
+          "total": 4000
+        }
+      ],
+      "points": 50,
+      "points_percent": 0.02,
+      "level": "鑽石",
+      "promo_link": "AJEKGE",
+      "accumulate": 2450
+    }
+  });
   useEffect(()=>{
     const getUserProfile = async () => {
       if(!jwtToken){
         return
       }
       const data = await api.getProfile(jwtToken);
-      console.log(data);
       setUserProfile(data);
     }
     getUserProfile();
@@ -139,7 +201,7 @@ function Profile() {
         <Photo src={user.picture} />
         <Content>{user.name}</Content>
         <Content>{user.email}</Content>
-        <BackEndButton to="/backend">Coupon管理後台</BackEndButton>
+        {userProfile.data.role_id === 1 ? <BackEndButton to="/backend">Coupon管理後台</BackEndButton> : []}
         <LogoutButton
           onClick={logout}
         >
@@ -153,7 +215,7 @@ function Profile() {
   }
 
   const renderCoupon = () => {
-    if (!userProfile) {
+    if (!userProfile.data.activity) {
       return
     }
     if (isLogin) return (
