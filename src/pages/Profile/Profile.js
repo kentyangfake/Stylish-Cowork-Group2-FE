@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import ReactLoading from 'react-loading';
 import api from '../../utils/api';
 import { AuthContext } from '../../context/authContext';
+import queryString from "query-string";
 
 const Wrapper = styled.div`
   display: flex;
@@ -216,6 +217,9 @@ function Profile() {
     getUserProfile();
   }, [jwtToken]);
 
+  const parsed = queryString.parse(window.location.search);
+  console.log(parsed);
+
   const renderContent = () => {
     if (loading) return <Loading type="spinningBubbles" color="#313538" />;
     if (isLogin) return (
@@ -232,7 +236,7 @@ function Profile() {
       </>
     );
     return (
-      <LogoutButton onClick={login}>登入</LogoutButton>
+      <LogoutButton onClick={() => login(parsed)}>登入</LogoutButton>
     );
   }
 
