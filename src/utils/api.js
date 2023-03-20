@@ -55,6 +55,7 @@ const api = {
     return await response.json();
   },
   async addCoupon(data, jwtToken) {
+    console.log(JSON.stringify(data));
     const response = await fetch(`${this.hostname}/admin/coupon`, {
       body: JSON.stringify(data),
       headers: new Headers({

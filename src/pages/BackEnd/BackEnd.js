@@ -139,12 +139,14 @@ const formInputs = [
   { label: '活動名稱', key: 'name' },
   { label: '活動描述', key: 'description' },
   { label: '折價金額', key: 'discount' },
-  { label: '開始日期', key: 'start_date' },
-  { label: '結束日期', key: 'expire_date' },
-  { label: '低消', key: 'minimum' },
-  { label: '試用商品分類', key: 'product_category' },
+
+  { label: '低消金額', key: 'minimum' },
   { label: '發行數量', key: 'total' },
 ];
+const timeData = [
+  { label: '開始日期', key: 'start_date' },
+  { label: '結束日期', key: 'expire_date' },
+]
 const couponOptions = [
   {
     label: '折價券',
@@ -155,17 +157,36 @@ const couponOptions = [
     value: 'delivery',
   },
 ];
+const categoryOptions = [
+  {
+    label: '全部',
+    value: 'all',
+  },
+  {
+    label: '男裝',
+    value: 'men',
+  },
+  {
+    label: '女裝',
+    value: 'women',
+  },
+  {
+    label: '配件',
+    value: 'accessories',
+  },
+];
 
 const BackEnd = () => {
   const [recipient, setRecipient] = useState({
     name: '',
+    category: '',
     description: '',
     discount: '',
-    start_date: '',
-    expire_date: '',
     minimum: '',
     product_category: '',
     total: '',
+    start_date: '',
+    expire_date: '',
   });
   const [invalidFields, setInvalidFields] = useState([]);
   const { jwtToken } = useContext(AuthContext);
@@ -182,10 +203,30 @@ const BackEnd = () => {
         });
         return;
       }
+      if (recipient.discount >= 1000) {
+        window.alert('老闆要哭了');
+        return;
+      }
+      if (recipient.minimum >= 100) {
+        window.alert('我們不是精品店');
+        return;
+      }
       const couponStatus = await api.addCoupon(recipient,jwtToken);
-      window.alert(`新增成功 狀態:${couponStatus}`);
+      window.alert(`新增成功 coupon編號:${couponStatus.couponId}`);
     } catch (err) {
       console.log(err);
+    } finally {
+      setRecipient({
+        name: '',
+        category: '',
+        description: '',
+        discount: '',
+        minimum: '',
+        product_category: '',
+        total: '',
+        start_date: '',
+        expire_date: '',
+      });
     }
   }
 
@@ -194,15 +235,31 @@ const BackEnd = () => {
       <Form ref={formRef}>
         <FormLegend>Coupon資料</FormLegend>
         <FormGroup>
-          <CheckLabel>種類</CheckLabel>
+          <CheckLabel>折價種類</CheckLabel>
           {couponOptions.map((option) => (
             <FormCheck key={option.value}>
               <FormCheckInput
                 type="radio"
-                checked={recipient.time === option.value}
+                checked={recipient.category === option.value}
                 onChange={(e) => {
                   if (e.target.checked)
-                    setRecipient({ ...recipient, time: option.value });
+                    setRecipient({ ...recipient, category: option.value });
+                }}
+              />
+              <FormCheckLabel>{option.label}</FormCheckLabel>
+            </FormCheck>
+          ))}
+        </FormGroup>
+        <FormGroup>
+          <CheckLabel>適用產品</CheckLabel>
+          {categoryOptions.map((option) => (
+            <FormCheck key={option.value}>
+              <FormCheckInput
+                type="radio"
+                checked={recipient.product_category === option.value}
+                onChange={(e) => {
+                  if (e.target.checked)
+                    setRecipient({ ...recipient, product_category: option.value });
                 }}
               />
               <FormCheckLabel>{option.label}</FormCheckLabel>
@@ -213,6 +270,20 @@ const BackEnd = () => {
           <FormGroup key={input.key}>
             <FormLabel>{input.label}</FormLabel>
             <FormControl
+              value={recipient[input.key]}
+              onChange={(e) =>
+                setRecipient({ ...recipient, [input.key]: e.target.value })
+              }
+              invalid={invalidFields.includes(input.key)}
+            />
+          </FormGroup>
+        ))}
+        {timeData.map((input) => (
+          <FormGroup key={input.key}>
+            <FormLabel>{input.label}</FormLabel>
+            <FormControl
+              type="date"
+              min="2022-03-20" max="2022-04-31"
               value={recipient[input.key]}
               onChange={(e) =>
                 setRecipient({ ...recipient, [input.key]: e.target.value })
