@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+import { Link } from 'react-router-dom';
 import line from './line.png';
 import facebook from './facebook.png';
 import twitter from './twitter.png';
@@ -121,6 +121,32 @@ const Copywright = styled.div`
   }
 `;
 
+const MapLink = styled(Link)`
+  width: 134px;
+  text-align: center;
+  position: relative;
+  color: #f5f5f5;
+  cursor: pointer;
+  text-decoration: none;
+  @media screen and (max-width: 1279px) {
+    width: auto;
+    line-height: 20px;
+    margin-bottom: 8px;
+    text-align: left;
+    color: white;
+    font-size: 14px;
+  }
+  &::after {
+    content: '|';
+    position: absolute;
+    left: 0;
+
+    @media screen and (max-width: 1279px) {
+      content: '';
+    }
+  }
+`
+
 function Footer() {
   return (
     <Wrapper>
@@ -132,6 +158,7 @@ function Footer() {
             )
           )}
         </SiteLinks>
+        <MapLink to='/map'>來店逛逛</MapLink>
         <SocialLinks>
           {[line, twitter, facebook].map((icon, index) => (
             <SocialLink key={index} icon={icon} />
