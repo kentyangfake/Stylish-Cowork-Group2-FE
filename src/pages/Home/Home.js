@@ -1,11 +1,14 @@
-import React , { useEffect,useState,useContext } from 'react';
+import React , { useEffect,useState,useContext,useRef } from 'react';
 import Carousel from './Carousel';
 import Products from './Products';
 import styled from 'styled-components';
 import api from '../../utils/api';
 import { AuthContext } from '../../context/authContext';
 import { useNavigate } from 'react-router-dom';
-
+const Wrapper = styled.div`
+  width:100vw;
+  overflow:hidden;
+`
 const Cat = styled.div`
   display:flex;
   flex-direction:column;
@@ -132,8 +135,10 @@ const CouponDiscount = styled.div`
 function Home() {
   const [counpons, setCoupons] = useState();
   const [position, setPosition] = useState({ top: "700px", left: "300px" });
+  const [catClicked, setCatClicked] = useState(false);
   const { user, isLogin, jwtToken } = useContext(AuthContext);
   const navigate = useNavigate();
+  const intervalRef = useRef();
 
   useEffect(() => {
     async function getCoupons() {
@@ -144,14 +149,13 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    intervalRef.current = window.setInterval(() => {
       setPosition({
         top: Math.floor(Math.random() * window.innerHeight + window.scrollY/2) + 700 + "px",
-        left: Math.floor(Math.random() * window.innerWidth) + "px",
+        left: Math.floor(Math.random() * window.innerWidth) - 150 + "px",
       });
-    }, 5000);
+    }, 3650);
 
-    return () => clearInterval(interval);
   }, []);
 
   if (!counpons) {
@@ -159,7 +163,7 @@ function Home() {
   }
 
   return (
-    <>
+    <Wrapper>
       <Carousel />
         <Scroll>
           <ScrollText>
@@ -198,12 +202,16 @@ function Home() {
           })}
         </CouponBlock>
       <Products />
-      <Cat position={position}>
-        <CatImg src='https://media.tenor.com/uEKZlGV8Ny0AAAAj/cat-cute.gif'/>
-        <CatP>邊 逛 街 邊 找 我 吧 ~</CatP>
+      <Cat position={position} onClick={() => {
+        window.clearInterval(intervalRef.current);
+        setCatClicked(true);
+        }}>
+        <CatImg src={catClicked? 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZDNiZTFhYzM2YWRjYjkwNTI1ZDRhMjU0ZmQ5NTE4Zjc5OTMyNGMxMyZjdD1z/OBhjqeFg5LuYSj78qe/giphy.gif':'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExODQ5Mzc4YzUzYWJlZGMxZGUwZDdiODI4OTk0ZGU0ZDAxNjZiNmYzYyZjdD1z/tn3Ej47sHXpgaxn3FZ/giphy.gif'}/>
+        <CatP>{catClicked? '我 在 某 個 產 品 裡 等 你 唷 !':'來 抓 我 吧 ~'}</CatP>
       </Cat>
-    </>
+    </Wrapper>
   );
 }
+
 
 export default Home;

@@ -156,9 +156,9 @@ const Madel = styled.div`
   font-size: 45px;
   font-weight:900;
   color: white;
-  width: 100px;
-  height: 100px;
-  border-radius:47px;
+  width: 125px;
+  height: 125px;
+  border-radius:60px;
   margin-top:10px;
   border: 5px solid ${({ level }) => {
     switch(level){
@@ -194,19 +194,19 @@ const Madel = styled.div`
   }};
 `
 const MemberText = styled.span`
-  font-size: 12px;
+  font-size: 15px;
   color:${({ level }) => {
     switch(level){
       case 'Bronze':
         return '#8D633D';
       case 'Silver':
-        return '#B5B6B1';
+        return '#8F8F8C';
       case 'Gold':
         return '#BA9D51';
       case 'Platinum':
-        return '#C4D4CB';
+        return '#81988B';
       case 'Titanium':
-        return '#C4E8D0';
+        return '#BF9FBF';
       default:
         return '#5B5B5B';
     }
@@ -218,10 +218,10 @@ const MemberPoints = styled(MemberText)`
   margin-left:auto;
 `
 const MemberPointsTitle = styled(MemberText)`
-  font-size: 15px;
+  font-size: 17px;
 `
 const MemberTitle = styled(MemberText)`
-  font-size: 20px;
+  font-size: 25px;
   font-weight:700;
 `
 const MemberTextGroup = styled.div`
@@ -379,7 +379,7 @@ function Profile() {
     if (isLogin) return (
       <CouponWrapper>
         <FormFieldSet>
-          <FormLegend>會員等級</FormLegend>
+          <FormLegend>會員資料</FormLegend>
           <CouponGroup>
             <Madel level={userProfile.data.level}>{userProfile.data.level.slice(0,1)}</Madel>
             <MemberTextGroup>
