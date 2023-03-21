@@ -138,6 +138,54 @@ const BackEndButton = styled(Link)`
   background-color:gray;
   margin-top: 24px;
 `;
+const Madel = styled.div`
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  font-weight:900;
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius:20px;
+  border: 5px solid ${({ level }) => {
+    switch(level){
+      case 'Bronze':
+        return '#B0A397';
+      case 'Silver':
+        return '#B5B6B1';
+      case 'Gold':
+        return '#FFFAEC';
+      case 'Platinum':
+        return '#F3FFFB';
+      case 'Titanium':
+        return '#E5F6F9';
+      default:
+        return '#B6B6B6';
+    }
+  }};
+  background-image: ${({ level }) => {
+    switch(level){
+      case 'Bronze':
+        return 'linear-gradient(144deg,#B58A6C, #8D633D 60%,#B0A397)';
+      case 'Silver':
+        return 'linear-gradient(144deg,#E2E1DD, #B5B6B1 60%,#B5B6B1)';
+      case 'Gold':
+        return 'linear-gradient(144deg,#B8AA85, #BA9D51 60%,#FFFAEC)';
+      case 'Platinum':
+        return 'linear-gradient(144deg,#D6DFD7, #C4D4CB 60%,#F3FFFB)';
+      case 'Titanium':
+        return 'linear-gradient(144deg,#D9CED6, #C4E8D0 60%,#E5F6F9)';
+      default:
+        return 'linear-gradient(144deg,#5B5B5B, #000000 60%,#B6B6B6)';
+    }
+  }};
+`
+const MemberText = styled.span`
+  line-height: 19px;
+  font-size:12px;
+`
+
 
 function Profile() {
   const { user, isLogin, login, logout, loading, jwtToken } = useContext(AuthContext);
@@ -146,14 +194,14 @@ function Profile() {
       "provider": "native",
       "user_id": 230,
       "role_id": 2,
-      "name": "admin",
-      "email": "admin@gmail.com",
+      "name": "",
+      "email": "",
       "picture": null,
       "activity": [
         {
           "id": 1,
-          "name": "限時200元折扣碼",
-          "description": "光棍節最新優惠",
+          "name": "測試coupon",
+          "description": "測試用",
           "start_date": "2023-03-17",
           "expire_date": "2023-06-17",
           "day_left": 90,
@@ -163,8 +211,8 @@ function Profile() {
         },
         {
           "id": 3,
-          "name": "新戶50元抵用券",
-          "description": "新戶優惠！！！",
+          "name": "測試coupon",
+          "description": "測試用",
           "start_date": "2023-03-17",
           "expire_date": "2023-03-27",
           "day_left": 10,
@@ -176,8 +224,8 @@ function Profile() {
       "delivery": [
         {
           "id": 2,
-          "name": "限時免運券！",
-          "description": "年終最新優惠",
+          "name": "測試coupon",
+          "description": "測試用",
           "start_date": "2023-03-17",
           "expire_date": "2023-03-27",
           "day_left": 10,
@@ -188,8 +236,8 @@ function Profile() {
         },
         {
           "id": 4,
-          "name": "免運券！",
-          "description": "年終最新優惠",
+          "name": "測試coupon",
+          "description": "測試用",
           "start_date": "2023-04-17",
           "expire_date": "2023-04-27",
           "day_left": 10,
@@ -199,9 +247,9 @@ function Profile() {
           "total": 4000
         }
       ],
-      "points": 50,
+      "points": 0,
       "points_percent": 0.02,
-      "level": "鑽石",
+      "level": "Bronze",
       "promo_link": "AJEKGE",
       "accumulate": 2450
     }
@@ -218,7 +266,6 @@ function Profile() {
   }, [jwtToken]);
 
   const parsed = queryString.parse(window.location.search);
-  console.log(parsed);
 
   const renderContent = () => {
     if (loading) return <Loading type="spinningBubbles" color="#313538" />;
@@ -246,6 +293,17 @@ function Profile() {
     }
     if (isLogin) return (
       <CouponWrapper>
+        <FormFieldSet>
+          <FormLegend>會員等級</FormLegend>
+          <CouponGroup>
+            <Madel level={userProfile.data.level}>{userProfile.data.level.slice(0,1)}</Madel>
+            <MemberText>會員等級: {userProfile.data.level}</MemberText>
+            <MemberText>會員積分: {userProfile.data.points} P</MemberText>
+            <MemberText>
+              <MemberText>分享連結拿積分: https://stylish-plus.web.app/profile?promo={userProfile.data.promo_link}</MemberText>
+            </MemberText>
+          </CouponGroup>
+        </FormFieldSet>
         <FormFieldSet>
           <FormLegend>我的折價券</FormLegend>
           <CouponGroup>

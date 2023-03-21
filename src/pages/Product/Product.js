@@ -235,7 +235,6 @@ function Product() {
   const { user, isLogin, jwtToken} = useContext(AuthContext);
   const navigate = useNavigate();
 
-  console.log(product);
   useEffect(() => {
     async function getProduct() {
       const { data } = await api.getProduct(id);

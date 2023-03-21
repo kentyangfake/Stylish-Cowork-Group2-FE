@@ -207,6 +207,10 @@ const BackEnd = () => {
         window.alert('老闆要哭了');
         return;
       }
+      if (recipient.category === 'delivery' && recipient.discount > 30) {
+        window.alert('拜託運費才30元');
+        return;
+      }
       if (recipient.minimum >= 100) {
         window.alert('我們不是精品店');
         return;
