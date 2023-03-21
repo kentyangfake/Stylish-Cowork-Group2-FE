@@ -10,6 +10,7 @@ const Wrapper = styled.div`
   display: flex;
   gap:90px;
   padding: 10px 70px;
+  margin-bottom:50px;
 `;
 
 const ProfilerWrapper = styled.div`

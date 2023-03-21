@@ -612,6 +612,10 @@ function Checkout() {
           <CouponGroup>
           {userProfile.data.activity.length !== 0? userProfile.data.activity.map((coupon) => (
             <Coupon key={coupon.id} isSelected={coupon.id === selectedActivity} onClick={()=>{
+              if(coupon.minimum > subtotal){
+                window.alert('再多買點東西吧?');
+                return
+              }
               setDiscount({
                 name:coupon.name,
                 price:coupon.discount,
@@ -638,6 +642,10 @@ function Checkout() {
           <DeliveryGroup>
           {userProfile.data.delivery.length !== 0? userProfile.data.delivery.map((coupon) => (
             <Coupon key={coupon.id} isSelected={coupon.id === selectedDelivery} onClick={()=>{
+              if(coupon.minimum > subtotal){
+                window.alert('不買東西是想賺運費?');
+                return
+              }
               setDeliverDiscount({
                 name:coupon.name,
                 price:coupon.discount,
