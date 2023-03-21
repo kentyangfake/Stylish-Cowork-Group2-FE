@@ -8,6 +8,8 @@ import queryString from "query-string";
 
 const Wrapper = styled.div`
   display: flex;
+  gap:90px;
+  padding: 10px 70px;
 `;
 
 const ProfilerWrapper = styled.div`
@@ -20,6 +22,7 @@ const ProfilerWrapper = styled.div`
 const CouponWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  width:60%;
 `
 const FormFieldSet = styled.fieldset`
   margin-top: 50px;
@@ -40,7 +43,7 @@ const FormLegend = styled.legend`
 const CouponGroup = styled.div`
   display:flex;
   flex-wrap:wrap;
-  width: 750px;
+  width: 100%;
   gap:15px;
   margin-top:15px;
   @media screen and (max-width: 1279px) {
@@ -127,27 +130,36 @@ const Content = styled.div`
   margin-top: 24px;
 `;
 const LogoutButton = styled.button`
+  border: none;
+  color: white;
+  background-color: #5982C0;
   margin-top: 24px;
 `;
 const Loading = styled(ReactLoading)`
   margin-top: 50px;
 `;
 const BackEndButton = styled(Link)`
-  width:100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color:white;
+  width:100%;
   height: 50px;
-  background-color:gray;
+  background-color: black;
   margin-top: 24px;
 `;
 const Madel = styled.div`
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 45px;
   font-weight:900;
   color: white;
-  width: 50px;
-  height: 50px;
-  border-radius:20px;
+  width: 100px;
+  height: 100px;
+  border-radius:47px;
+  margin-top:10px;
   border: 5px solid ${({ level }) => {
     switch(level){
       case 'Bronze':
@@ -182,8 +194,64 @@ const Madel = styled.div`
   }};
 `
 const MemberText = styled.span`
+  font-size: 12px;
+  color:${({ level }) => {
+    switch(level){
+      case 'Bronze':
+        return '#8D633D';
+      case 'Silver':
+        return '#B5B6B1';
+      case 'Gold':
+        return '#BA9D51';
+      case 'Platinum':
+        return '#C4D4CB';
+      case 'Titanium':
+        return '#C4E8D0';
+      default:
+        return '#5B5B5B';
+    }
+  }};
+`
+const MemberPoints = styled(MemberText)`
+  font-size: 50px;
+  font-weight:700;
+  margin-left:auto;
+`
+const MemberPointsTitle = styled(MemberText)`
+  font-size: 15px;
+`
+const MemberTitle = styled(MemberText)`
+  font-size: 20px;
+  font-weight:700;
+`
+const MemberTextGroup = styled.div`
+  display:flex;
+  flex-direction:column;
+  padding-left:30px;
+`
+const MemberLinkGroup = styled.div`
+  display: flex;
+  margin-left: auto;
+  margin-top: auto;
+`
+const MemberLinkTab = styled.span`
   line-height: 19px;
   font-size:12px;
+  background-color: #B5B6B1;
+  color: white;
+  border: 1px solid #B5B6B1;
+  height: fit-content;
+  padding: 5px;
+`
+const MemberLink = styled(MemberLinkTab)`
+  background-color: white;
+  color: #B5B6B1;
+  border: 1px dotted lightgray;
+`
+const MemberPointsGroup = styled.div`
+  display:flex;
+  margin-top:20px;
+  margin-bottom:20px;
 `
 
 
@@ -283,8 +351,25 @@ function Profile() {
       </>
     );
     return (
-      <LogoutButton onClick={() => login(parsed)}>登入</LogoutButton>
+      <LogoutButton onClick={() => login(parsed)}>Facebook登入</LogoutButton>
     );
+  }
+  
+  const levelUp = (level) => {
+    switch(level){
+      case 'Bronze':
+        return `※ 再消費 ${10000 - userProfile.data.accumulate}元 可升至銀級會員`;
+      case 'Silver':
+        return `※ 再消費 ${30000 - userProfile.data.accumulate}元 可升至金級會員`;
+      case 'Gold':
+        return `※ 再消費 ${50000 - userProfile.data.accumulate}元 可升至白金級會員`;
+      case 'Platinum':
+        return `※ 再消費 ${100000 - userProfile.data.accumulate}元 可升至尊榮鈦金會員`;
+      case 'Titanium':
+        return `我要叫你爸爸!`;
+      default:
+        return `測試會員`;
+    }
   }
 
   const renderCoupon = () => {
@@ -297,11 +382,18 @@ function Profile() {
           <FormLegend>會員等級</FormLegend>
           <CouponGroup>
             <Madel level={userProfile.data.level}>{userProfile.data.level.slice(0,1)}</Madel>
-            <MemberText>會員等級: {userProfile.data.level}</MemberText>
-            <MemberText>會員積分: {userProfile.data.points} P</MemberText>
-            <MemberText>
-              <MemberText>分享連結拿積分: https://stylish-plus.web.app/profile?promo={userProfile.data.promo_link}</MemberText>
-            </MemberText>
+            <MemberTextGroup>
+              <MemberTitle level={userProfile.data.level}>{userProfile.data.level} Membership</MemberTitle>
+              <MemberPointsGroup>
+                <MemberPointsTitle level={userProfile.data.level}>會員<br/>積分</MemberPointsTitle>
+                <MemberPoints level={userProfile.data.level}>{userProfile.data.points} P</MemberPoints>
+              </MemberPointsGroup>
+              <MemberText level={userProfile.data.level}>{levelUp(userProfile.data.level)}</MemberText>
+            </MemberTextGroup>
+            <MemberLinkGroup>
+              <MemberLinkTab>分享連結拿積分</MemberLinkTab>
+              <MemberLink>https://stylish-plus.web.app/profile?promo={userProfile.data.promo_link}</MemberLink>
+            </MemberLinkGroup>
           </CouponGroup>
         </FormFieldSet>
         <FormFieldSet>
