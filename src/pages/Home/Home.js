@@ -77,14 +77,18 @@ const ScrollText = styled.div`
     }
   }
 `
+const CouponWrapper = styled.div`
+  display:flex;
+  justify-content:center;
+  width:100%;
+`
 const CouponBlock = styled.div`
   display:flex;
   flex-wrap:wrap;
   justify-content:flex-start;
   padding: 20px 60px; 
-  padding-left: 80px;
+  padding-left: 100px;
   height: fit-content;
-  width:100%;
   background-color:lightgray;
 `
 const Coupon = styled.div`
@@ -165,14 +169,15 @@ function Home() {
   return (
     <Wrapper>
       <Carousel />
-        <Scroll>
-          <ScrollText>
-            限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 相 愛 相 殺 !!
-          </ScrollText>
-          <ScrollText>
-            限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !!
-          </ScrollText>
-        </Scroll>
+      <Scroll>
+        <ScrollText>
+          限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 相 愛 相 殺 !!
+        </ScrollText>
+        <ScrollText>
+          限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !! 限 時 免 運 !! 超 狂 折 價 !! 限 量 瘋 搶 !!
+        </ScrollText>
+      </Scroll>
+      <CouponWrapper>
         <CouponBlock>
           {counpons.activity.length !== 0 && counpons.activity.map((coupon) => {
             return(
@@ -201,6 +206,7 @@ function Home() {
             );
           })}
         </CouponBlock>
+      </CouponWrapper>
       <Products />
       <Cat position={position} onClick={() => {
         window.clearInterval(intervalRef.current);
