@@ -240,7 +240,7 @@ const PriceName = styled.div`
   }
 `;
 const RedPriceName = styled(PriceName)`
-  color: red;
+  color: #F87474;
 `;
 const MemberPointsCheck = styled.div`
   line-height: 19px;
@@ -258,7 +258,7 @@ const MemberPoints = styled.div`
   color: #BA9D51;
 `;
 const GreenPriceName = styled(PriceName)`
-  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? '#00B29D' : '#3f3a3a'};
 `;
 const Currency = styled.div`
   margin-left: auto;
@@ -267,10 +267,10 @@ const Currency = styled.div`
   color: #3f3a3a;
 `;
 const RedCurrency = styled(Currency)`
-  color: red;
+  color: #F87474;
 `;
 const GreenCurrency = styled(Currency)`
-  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? '#00B29D' : '#3f3a3a'};
 `;
 const PriceValue = styled.div`
   line-height: 36px;
@@ -279,12 +279,12 @@ const PriceValue = styled.div`
   color: #3f3a3a;
 `;
 const GreenPriceValue = styled(PriceValue)`
-  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? '#00B29D' : '#3f3a3a'};
 `
 
 const DiscountValue = styled(PriceValue)`
   font-size: 22px;
-  color: red;
+  color: #F87474;
 `;
 
 const CouponSet = styled.div`
@@ -317,7 +317,7 @@ const Coupon = styled.div`
   justify-content: space-between;
   width:230px;
   height:100px;
-  background-color: #F9F2ED;
+  background-color: ${({ isSelected }) => isSelected > 0 ? '#FFFAEC' : '#F9F2ED'};
   cursor: pointer;
   @media screen and (max-width: 1279px) {
   width: 290px;
@@ -420,6 +420,8 @@ function Checkout() {
   });
   const [userProfile, setUserProfile] = useState();
   const [memberPointChecked, setMemberPointChecked] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState();
+  const [selectedDelivery, setSelectedDelivery] = useState();
 
   useEffect(() => {
     const setupTappay = async () => {
@@ -609,12 +611,17 @@ function Checkout() {
           <FormLegend>我的折價券</FormLegend>
           <CouponGroup>
           {userProfile.data.activity.length !== 0? userProfile.data.activity.map((coupon) => (
-            <Coupon key={coupon.id} onClick={()=>{
+            <Coupon key={coupon.id} isSelected={coupon.id === selectedActivity} onClick={()=>{
+              if(coupon.minimum > subtotal){
+                window.alert('再多買點東西吧?');
+                return
+              }
               setDiscount({
                 name:coupon.name,
                 price:coupon.discount,
                 id:coupon.id,
-              })
+              });
+              setSelectedActivity(coupon.id);
             }}>
                 <CouponContext>
                   <CouponTitle>
@@ -634,12 +641,17 @@ function Checkout() {
           <FormLegend>我的免運券</FormLegend>
           <DeliveryGroup>
           {userProfile.data.delivery.length !== 0? userProfile.data.delivery.map((coupon) => (
-            <Coupon key={coupon.id} onClick={()=>{
+            <Coupon key={coupon.id} isSelected={coupon.id === selectedDelivery} onClick={()=>{
+              if(coupon.minimum > subtotal){
+                window.alert('不買東西是想賺運費?');
+                return
+              }
               setDeliverDiscount({
                 name:coupon.name,
                 price:coupon.discount,
                 id:coupon.id,
-              })
+              });
+              setSelectedDelivery(coupon.id);
             }}>
                 <CouponContext>
                   <CouponTitle>

@@ -50,7 +50,7 @@ const Wrapper = styled.div`
   padding: 65px 0 49px;
   display: flex;
   flex-wrap: wrap;
-
+  justify-content:center;
   @media screen and (max-width: 1279px) {
     padding: 0 0 32px;
   }
@@ -234,6 +234,7 @@ function Product() {
   const { id } = useParams();
   const { user, isLogin, jwtToken} = useContext(AuthContext);
   const navigate = useNavigate();
+  const [catClicked, setCatClicked] = useState(false);
 
   useEffect(() => {
     async function getProduct() {
@@ -268,7 +269,10 @@ function Product() {
           <Image src={image} key={index} />
         ))}
       </Images>
-      {product.coupon_id?<Cat onClick={isLogin? () => api.userGetCoupon({user_id:user.id, coupon_id:product.coupon_id}, jwtToken):() => navigate('/profile')}><CatImg src='https://media.tenor.com/uEKZlGV8Ny0AAAAj/cat-cute.gif'/><CatP>被 你 找 到 啦 ~<br/>點 我 領 取 coupon 券 ~</CatP></Cat> : []}
+      {product.coupon_id?<Cat onClick={isLogin? () => {
+        api.userGetCoupon({user_id:user.id, coupon_id:product.coupon_id}, jwtToken);
+        setCatClicked(true);
+      }:() => navigate('/profile')}><CatImg src='https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNzdjZDQwYTdlODNhOThjNTJmYzg5OWVlNjU2ZGJkMTdiODFmYzEzMSZjdD1z/PfLcT0e0zkw2G8yMdk/giphy.gif'/><CatP>{catClicked?'coupon 券 送 到 帳 戶 囉 ~':`被 你 找 到 啦 ~ 戳 我 戳 我 ~`}</CatP></Cat> : []}
     </Wrapper>
   );
 }
