@@ -25,6 +25,7 @@ const tappay = {
     );
   },
   setupCard(numberElement, expirationDateElement, ccvElement) {
+    console.log(numberElement);
     window.TPDirect.card.setup({
       fields: {
         number: {

@@ -242,6 +242,21 @@ const PriceName = styled.div`
 const RedPriceName = styled(PriceName)`
   color: red;
 `;
+const MemberPointsCheck = styled.div`
+  line-height: 19px;
+  font-size: 16px;
+  color: #BA9D51;
+  @media screen and (max-width: 1279px) {
+    line-height: 17px;
+    font-size: 14px;
+  }
+`;
+const MemberPoints = styled.div`
+  margin-left: auto;
+  line-height: 17px;
+  font-size: 14px;
+  color: #BA9D51;
+`;
 const GreenPriceName = styled(PriceName)`
   color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
 `;
@@ -386,9 +401,9 @@ function Checkout() {
   const [invalidFields, setInvalidFields] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const cardNumberRef = useRef();
-  const cardExpirationDateRef = useRef();
-  const cardCCVRef = useRef();
+  const cardNumberRef = useRef('#card-number');
+  const cardExpirationDateRef = useRef('#card-expiration-date');
+  const cardCCVRef = useRef('#card-ccv');
   const formRef = useRef();
 
   const { jwtToken, isLogin, login } = useContext(AuthContext);
@@ -403,20 +418,8 @@ function Checkout() {
     price:0,
     id:null,
   });
-
   const [userProfile, setUserProfile] = useState();
-
-  useEffect(()=>{
-    const getUserProfile = async () => {
-      if(!jwtToken){
-        return
-      }
-      const data = await api.getProfile(jwtToken);
-      console.log(data);
-      setUserProfile(data);
-    }
-    getUserProfile();
-  }, [jwtToken]);
+  const [memberPointChecked, setMemberPointChecked] = useState(false);
 
   useEffect(() => {
     const setupTappay = async () => {
@@ -428,7 +431,18 @@ function Checkout() {
       );
     }
     setupTappay();
-  }, []);
+  }, [userProfile]);
+
+  useEffect(()=>{
+    const getUserProfile = async () => {
+      if(!jwtToken){
+        return
+      }
+      const data = await api.getProfile(jwtToken);
+      setUserProfile(data);
+    }
+    getUserProfile();
+  }, [jwtToken]);
 
   if (!userProfile) {
     return
@@ -477,7 +491,7 @@ function Checkout() {
         window.alert('付款資料輸入有誤');
         return;
       }
-  
+
       const { data } = await api.checkout(
         {
           prime: result.card.prime,
@@ -491,8 +505,8 @@ function Checkout() {
             activity_discount: discount.price,
             delivery_id: deliverDiscount.id,
             delivery_discount: deliverDiscount.price,
-            used_points: 0,
-            total: subtotal + freight - discount.price - deliverDiscount.price,
+            used_points: memberPointChecked? userProfile.data.points : 0,
+            total: subtotal + freight - discount.price - deliverDiscount.price - (memberPointChecked? userProfile.data.points : 0),
             recipient,
             list: cartItems,
           },
@@ -653,11 +667,22 @@ function Checkout() {
         <GreenPriceValue freightDiscount={deliverDiscount.price}>{freight - deliverDiscount.price}</GreenPriceValue>
       </ShippingPrice>
       <Discount />
+      <ShippingPrice>
+        <MemberPointsCheck>
+          <label htmlFor="scales">會員積分</label>
+          <input type="checkbox" id="scales" name="scales" checked={memberPointChecked} onChange={() => setMemberPointChecked(prev => !prev)}/>
+        </MemberPointsCheck>
+        <MemberPoints>{memberPointChecked? 0 : userProfile.data.points} P</MemberPoints>
+      </ShippingPrice>
       <TotalPrice>
         <PriceName>應付金額</PriceName>
         <Currency>NT.</Currency>
-        <PriceValue>{subtotal + freight - discount.price - deliverDiscount.price}</PriceValue>
+        <PriceValue>{subtotal + freight - discount.price - deliverDiscount.price - (memberPointChecked? userProfile.data.points : 0)}</PriceValue>
       </TotalPrice>
+      <ShippingPrice>
+      <MemberPointsCheck>{userProfile.data.level}會員回饋:</MemberPointsCheck>
+      <MemberPoints>{((subtotal + freight - discount.price - deliverDiscount.price - (memberPointChecked? userProfile.data.points : 0))*(0.01*userProfile.data.points_percent)).toFixed(0)} P</MemberPoints>
+      </ShippingPrice>
       <Button loading={loading} onClick={checkout}>確認付款</Button>
     </Wrapper>
   );

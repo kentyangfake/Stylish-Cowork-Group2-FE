@@ -5,10 +5,12 @@
   "dependencies": {
     "firebase": "^9.18.0",
     "firebase-tools": "^11.24.1",
+    "query-string": "^8.1.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-hook-clipboard": "^1.0.3",
     "react-loading": "^2.0.3",
-    "react-router-dom": "^6.3.0",
+    "react-router-dom": "^6.9.0",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.5",
     "styled-reset": "^4.4.1"
