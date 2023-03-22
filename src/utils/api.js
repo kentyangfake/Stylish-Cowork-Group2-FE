@@ -91,7 +91,7 @@ const api = {
   },
   async getFuzzySearch(keyword) {
     const response = await fetch(`${this.hostname}/products/fuzzysearch`, {
-        body: {"keyword": keyword},
+        body: JSON.stringify({'keyword':keyword}),
         headers: new Headers({
         'Content-Type': 'application/json'
       }),
