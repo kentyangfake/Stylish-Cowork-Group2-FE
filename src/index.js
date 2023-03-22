@@ -8,6 +8,7 @@ import ThankYou from './pages/ThankYou/ThankYou';
 import Product from './pages/Product/Product';
 import Profile from './pages/Profile/Profile';
 import BackEnd from './pages/BackEnd/BackEnd';
+import Map from './pages/Map/Map';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -21,6 +22,7 @@ root.render(
         <Route path="thankyou" element={<ThankYou />} />
         <Route path="profile" element={<Profile />} />
         <Route path="backend" element={<BackEnd />} />
+        <Route path="map" element={<Map />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>

@@ -89,6 +89,16 @@ const api = {
       window.alert(error.message);
     }
   },
+  async getFuzzySearch(keyword) {
+    const response = await fetch(`${this.hostname}/products/fuzzysearch`, {
+        body: JSON.stringify({'keyword':keyword}),
+        headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      method: 'POST',
+    });
+    return await response.json();
+  },
 };
 
 export default api;

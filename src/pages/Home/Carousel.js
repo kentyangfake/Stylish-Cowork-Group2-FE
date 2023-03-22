@@ -25,6 +25,10 @@ const Campaign = styled(Link)`
   transition: opacity 1s;
   text-decoration: none;
   color: #070707;
+  &:hover{
+    color: #070707;
+    text-decoration: none;
+  }
 `;
 
 const Story = styled.div`

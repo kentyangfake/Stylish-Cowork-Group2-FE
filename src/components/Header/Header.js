@@ -11,6 +11,10 @@ import profileMobile from './profile-mobile.png';
 import { AuthContext } from '../../context/authContext';
 import { CartContext } from '../../context/cartContext';
 
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import api from '../../utils/api';
+
 const Wrapper = styled.div`
   position: fixed;
   top: 0;
@@ -99,39 +103,43 @@ const CategoryLink = styled.a`
   }
 `;
 
-const SearchInput = styled.input`
-  height: 40px;
-  width: 214px;
-  border: none;
-  outline: none;
+// const SearchInput = styled.input`
+//   height: 40px;
+//   width: 214px;
+//   border: none;
+//   outline: none;
+//   margin-left: auto;
+//   border-radius: 20px;
+//   padding: 6px 45px 6px 20px;
+//   border: solid 1px #979797;
+//   background-image: url(${search});
+//   background-size: 44px;
+//   background-position: 160px center;
+//   background-repeat: no-repeat;
+//   font-size: 20px;
+//   line-height: 24px;
+//   color: #8b572a;
+
+//   @media screen and (max-width: 1279px) {
+//     width: 0;
+//     border: none;
+//     position: fixed;
+//     right: 16px;
+//     background-size: 32px;
+//     background-position: right center;
+//   }
+
+//   &:focus {
+//     @media screen and (max-width: 1279px) {
+//       width: calc(100% - 20px);
+//       border: solid 1px #979797;
+//     }
+//   }
+// `;
+
+const SearchWrapper = styled.div`
   margin-left: auto;
-  border-radius: 20px;
-  padding: 6px 45px 6px 20px;
-  border: solid 1px #979797;
-  background-image: url(${search});
-  background-size: 44px;
-  background-position: 160px center;
-  background-repeat: no-repeat;
-  font-size: 20px;
-  line-height: 24px;
-  color: #8b572a;
-
-  @media screen and (max-width: 1279px) {
-    width: 0;
-    border: none;
-    position: fixed;
-    right: 16px;
-    background-size: 32px;
-    background-position: right center;
-  }
-
-  &:focus {
-    @media screen and (max-width: 1279px) {
-      width: calc(100% - 20px);
-      border: solid 1px #979797;
-    }
-  }
-`;
+`
 
 const PageLinks = styled.div`
   margin-left: 42px;
@@ -248,10 +256,24 @@ function Header() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const category = searchParams.get('category');
+  const [options,setOptions] = useState([]);
 
   useEffect(() => {
     if (category) setInputValue('');
   }, [category]);
+
+  async function getSearchData() {
+    try {
+      const { data } = await api.getFuzzySearch(inputValue);
+      const searchResult = [];
+      for (var i = 0; i < data.length; i++) {
+        searchResult.push(data[i].title);
+      }
+      setOptions(searchResult);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   return (
     <Wrapper>
@@ -273,7 +295,7 @@ function Header() {
           </CategoryLink>
         ))}
       </CategoryLinks>
-      <SearchInput
+      {/* <SearchInput
         onKeyPress={(e) => {
           if (e.key === 'Enter') {
             navigate(`/?keyword=${inputValue}`);
@@ -281,7 +303,27 @@ function Header() {
         }}
         onChange={(e) => setInputValue(e.target.value)}
         value={inputValue}
-      />
+      /> */}
+      <SearchWrapper>
+        <Autocomplete
+          onInput={(e) => {
+            setInputValue(e.target.value);
+            getSearchData();
+          }}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              setInputValue(e.target.value);
+              getSearchData();
+              navigate(`/?keyword=${inputValue}`);
+            }
+          }}
+          disablePortal
+          id="combo-box-demo"
+          options={options}
+          style={{ width: 214, marginLeft: 'auto', backgroundColor: 'rgba(255,255,255,0.4)', borderRadius: 4 }}
+          renderInput={(params) => <TextField {...params} label="Search" />}
+        />
+      </SearchWrapper>
       <PageLinks>
         <PageLink to={ isLogin ? "/checkout" : "/profile"}>
           <PageLinkCartIcon icon={cart}>
