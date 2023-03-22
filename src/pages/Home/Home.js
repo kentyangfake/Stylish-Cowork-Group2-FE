@@ -81,6 +81,7 @@ const CouponWrapper = styled.div`
   display:flex;
   justify-content:center;
   width:100%;
+  background-color:lightgray;
 `
 const CouponBlock = styled.div`
   display:flex;
@@ -89,7 +90,6 @@ const CouponBlock = styled.div`
   padding: 20px 60px; 
   padding-left: 100px;
   height: fit-content;
-  background-color:lightgray;
 `
 const Coupon = styled.div`
   display:flex;

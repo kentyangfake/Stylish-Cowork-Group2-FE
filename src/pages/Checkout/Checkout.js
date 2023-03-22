@@ -392,10 +392,10 @@ const timeOptions = [
 
 function Checkout() {
   const [recipient, setRecipient] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
+    name: '爆肝の工程師',
+    email: 'liver_broken_engineer@gmail.com',
+    phone: '0987878787',
+    address: '睡公園',
     time: '',
   });
   const [invalidFields, setInvalidFields] = useState([]);
@@ -682,7 +682,13 @@ function Checkout() {
       <ShippingPrice>
         <MemberPointsCheck>
           <label htmlFor="scales">會員積分</label>
-          <input type="checkbox" id="scales" name="scales" checked={memberPointChecked} onChange={() => setMemberPointChecked(prev => !prev)}/>
+          <input type="checkbox" id="scales" name="scales" checked={memberPointChecked} onChange={() => {
+            if(userProfile.data.points > subtotal){
+              window.alert('未達使用條件,請再多消費');
+              return
+            }
+            setMemberPointChecked(prev => !prev);
+            }}/>
         </MemberPointsCheck>
         <MemberPoints>{memberPointChecked? 0 : userProfile.data.points} P</MemberPoints>
       </ShippingPrice>

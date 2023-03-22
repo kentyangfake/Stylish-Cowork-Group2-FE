@@ -265,6 +265,7 @@ function Header() {
   async function getSearchData() {
     try {
       const { data } = await api.getFuzzySearch(inputValue);
+      console.log(data);
       const searchResult = [];
       for (var i = 0; i < data.length; i++) {
         searchResult.push(data[i].title);

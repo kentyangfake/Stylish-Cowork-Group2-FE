@@ -178,11 +178,11 @@ const categoryOptions = [
 
 const BackEnd = () => {
   const [recipient, setRecipient] = useState({
-    name: '',
+    name: '3/23限時優惠',
     category: '',
-    description: '',
+    description: '今日限定喔！',
     discount: '',
-    minimum: '',
+    minimum: '4000',
     product_category: '',
     total: '',
     start_date: '',
@@ -211,26 +211,21 @@ const BackEnd = () => {
         window.alert('拜託運費才30元');
         return;
       }
-      if (recipient.minimum >= 100) {
-        window.alert('我們不是精品店');
-        return;
-      }
       const couponStatus = await api.addCoupon(recipient,jwtToken);
       window.alert(`新增成功 coupon編號:${couponStatus.couponId}`);
-    } catch (err) {
-      console.log(err);
-    } finally {
       setRecipient({
-        name: '',
+        name: '3/23限時優惠',
         category: '',
-        description: '',
+        description: '今日限定喔！',
         discount: '',
-        minimum: '',
+        minimum: '4000',
         product_category: '',
         total: '',
         start_date: '',
         expire_date: '',
       });
+    } catch (err) {
+      console.log(err);
     }
   }
 
