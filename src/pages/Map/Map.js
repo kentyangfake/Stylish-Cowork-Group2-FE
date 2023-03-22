@@ -31,8 +31,12 @@ const SearchGroup = styled.div`
 const SearchButton = styled.button`
   width:500px;
   height:80px;
+  font-size:18px;
   background-color:black;
   color:white;
+  &:hover{
+    background-color:#8D633D;
+  }
 `
 const MapLabel = styled.div`
   font-size:20px;
@@ -166,7 +170,7 @@ function Map() {
         <MapTitle>來店逛逛</MapTitle>
         <MapLabel>請輸入您的位置,我們會幫您計算到店的最短路徑</MapLabel>
         <input type="text" id="from" placeholder="你在哪裏?" className="form-control" onChange={(e)=>setFrom(e.target.value)}/>
-        <SearchButton onClick={() => calcRoute()}> 來店裡玩玩！</SearchButton>
+        <SearchButton onClick={() => calcRoute()}>點 我 去 試 穿</SearchButton>
       </SearchGroup>
       <GoogleMap>
         <div id="map" style={{ height: "550px", width:'1280px',border: `20px solid #BDB0A4` }} />
