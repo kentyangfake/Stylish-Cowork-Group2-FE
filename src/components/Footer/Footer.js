@@ -136,11 +136,14 @@ const MapLink = styled(Link)`
     color: white;
     font-size: 14px;
   }
+  &:hover {
+    color:white;
+    text-decoration:none;
+  }
   &::after {
     content: '|';
     position: absolute;
     left: 0;
-
     @media screen and (max-width: 1279px) {
       content: '';
     }
