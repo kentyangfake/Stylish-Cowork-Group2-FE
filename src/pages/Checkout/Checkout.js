@@ -240,10 +240,25 @@ const PriceName = styled.div`
   }
 `;
 const RedPriceName = styled(PriceName)`
-  color: red;
+  color: #F87474;
+`;
+const MemberPointsCheck = styled.div`
+  line-height: 19px;
+  font-size: 16px;
+  color: #BA9D51;
+  @media screen and (max-width: 1279px) {
+    line-height: 17px;
+    font-size: 14px;
+  }
+`;
+const MemberPoints = styled.div`
+  margin-left: auto;
+  line-height: 17px;
+  font-size: 14px;
+  color: #BA9D51;
 `;
 const GreenPriceName = styled(PriceName)`
-  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? '#00B29D' : '#3f3a3a'};
 `;
 const Currency = styled.div`
   margin-left: auto;
@@ -252,10 +267,10 @@ const Currency = styled.div`
   color: #3f3a3a;
 `;
 const RedCurrency = styled(Currency)`
-  color: red;
+  color: #F87474;
 `;
 const GreenCurrency = styled(Currency)`
-  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? '#00B29D' : '#3f3a3a'};
 `;
 const PriceValue = styled.div`
   line-height: 36px;
@@ -264,12 +279,12 @@ const PriceValue = styled.div`
   color: #3f3a3a;
 `;
 const GreenPriceValue = styled(PriceValue)`
-  color: ${({ freightDiscount }) => freightDiscount > 0 ? 'green' : '#3f3a3a'};
+  color: ${({ freightDiscount }) => freightDiscount > 0 ? '#00B29D' : '#3f3a3a'};
 `
 
 const DiscountValue = styled(PriceValue)`
   font-size: 22px;
-  color: red;
+  color: #F87474;
 `;
 
 const CouponSet = styled.div`
@@ -282,7 +297,7 @@ const CouponSet = styled.div`
 const CouponGroup = styled.div`
   display:flex;
   flex-wrap:wrap;
-  max-width: 750px;
+  width: 750px;
   gap:15px;
   margin-top:15px;
   @media screen and (max-width: 1279px) {
@@ -295,30 +310,29 @@ const DeliveryGroup = styled(CouponGroup)`
 
 @media screen and (max-width: 1279px) {
   width: 100%;
-}
+  }
 `
 const Coupon = styled.div`
   display:flex;
-  justify-content:space-between;
+  justify-content: space-between;
   width:230px;
   height:100px;
-  padding:5px;
-  border: 1px solid lightgray;
-  border-radius:10px;
+  background-color: ${({ isSelected }) => isSelected > 0 ? '#FFFAEC' : '#F9F2ED'};
+  cursor: pointer;
   @media screen and (max-width: 1279px) {
   width: 290px;
-}
-`
-const CouponTitle = styled.div`
-  display:flex;
-  flex-direction:column;
-  background-color:${({ category }) => category === 'delivery' ? 'green' : 'red'};
-  border-radius:5px;
-  height:100%;
+  }
+  &:hover{
+    background-color:white;
+    border:1px dotted lightgray;
+  }
 `
 const CouponContext = styled.div`
   display:flex;
+  justify-content:center;
+  align-items:center;
   flex-direction:column;
+  width:70%;
   height:100%;
 `
 const CouponDiscount = styled.div`
@@ -326,13 +340,28 @@ const CouponDiscount = styled.div`
   align-items:center;
   justify-items:center;
   padding-top:10px;
+  color:#F9F2ED;
   writing-mode:vertical-lr;
   font-weight:700;
   font-size:25px;
   height:100%;
+  width:30%;
+  border-left: 2px dotted #F9F2ED;
+  background-color:${({ category }) => category === 'delivery' ? '#00B29D' : '#F87474'};
+`
+const CouponTitle = styled.span`
+  font-size:20px;
+  font-weight:700;
+  padding-bottom:10px;
+  border-bottom:1px solid #3f3a3a;
+  margin-bottom:5px;
 `
 const CouponText = styled.span`
   font-size:12px;
+`
+const CouponDate = styled(CouponText)`
+  font-weight:600;
+  padding-left:5px;
 `
 
 const formInputs = [
@@ -372,9 +401,9 @@ function Checkout() {
   const [invalidFields, setInvalidFields] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const cardNumberRef = useRef();
-  const cardExpirationDateRef = useRef();
-  const cardCCVRef = useRef();
+  const cardNumberRef = useRef('#card-number');
+  const cardExpirationDateRef = useRef('#card-expiration-date');
+  const cardCCVRef = useRef('#card-ccv');
   const formRef = useRef();
 
   const { jwtToken, isLogin, login } = useContext(AuthContext);
@@ -389,21 +418,10 @@ function Checkout() {
     price:0,
     id:null,
   });
-
   const [userProfile, setUserProfile] = useState();
-  // console.log(userProfile);
-
-  useEffect(()=>{
-    const getUserProfile = async () => {
-      if(!jwtToken){
-        return
-      }
-      const data = await api.getProfile(jwtToken);
-      console.log(data);
-      setUserProfile(data);
-    }
-    getUserProfile();
-  }, [jwtToken]);
+  const [memberPointChecked, setMemberPointChecked] = useState(false);
+  const [selectedActivity, setSelectedActivity] = useState();
+  const [selectedDelivery, setSelectedDelivery] = useState();
 
   useEffect(() => {
     const setupTappay = async () => {
@@ -415,7 +433,18 @@ function Checkout() {
       );
     }
     setupTappay();
-  }, []);
+  }, [userProfile]);
+
+  useEffect(()=>{
+    const getUserProfile = async () => {
+      if(!jwtToken){
+        return
+      }
+      const data = await api.getProfile(jwtToken);
+      setUserProfile(data);
+    }
+    getUserProfile();
+  }, [jwtToken]);
 
   if (!userProfile) {
     return
@@ -464,7 +493,7 @@ function Checkout() {
         window.alert('付款資料輸入有誤');
         return;
       }
-  
+
       const { data } = await api.checkout(
         {
           prime: result.card.prime,
@@ -478,8 +507,8 @@ function Checkout() {
             activity_discount: discount.price,
             delivery_id: deliverDiscount.id,
             delivery_discount: deliverDiscount.price,
-            used_points: 0,
-            total: subtotal + freight - discount.price - deliverDiscount.price,
+            used_points: memberPointChecked? userProfile.data.points : 0,
+            total: subtotal + freight - discount.price - deliverDiscount.price - (memberPointChecked? userProfile.data.points : 0),
             recipient,
             list: cartItems,
           },
@@ -581,57 +610,61 @@ function Checkout() {
         <FormFieldSet>
           <FormLegend>我的折價券</FormLegend>
           <CouponGroup>
-          {userProfile.data.activity.map((coupon) => (
-            <Coupon key={coupon.id} onClick={()=>{
+          {userProfile.data.activity.length !== 0? userProfile.data.activity.map((coupon) => (
+            <Coupon key={coupon.id} isSelected={coupon.id === selectedActivity} onClick={()=>{
+              if(coupon.minimum > subtotal){
+                window.alert('再多買點東西吧?');
+                return
+              }
               setDiscount({
                 name:coupon.name,
                 price:coupon.discount,
                 id:coupon.id,
-              })
+              });
+              setSelectedActivity(coupon.id);
             }}>
-              <CouponTitle category={'activity'}>折價券</CouponTitle>
                 <CouponContext>
-                  <CouponText>
+                  <CouponTitle>
                     {coupon.name}
-                  </CouponText>
+                  </CouponTitle>
                   <CouponText>
-                    {coupon.description}
-                  </CouponText>
-                  <CouponText>
-                    {coupon.expire_date}
+                    <CouponText>Valid Until</CouponText>
+                    <CouponDate>{coupon.expire_date}</CouponDate>
                   </CouponText>
                 </CouponContext>
-              <CouponDiscount>$ {coupon.discount}</CouponDiscount>
+              <CouponDiscount category={'activity'}>$ {coupon.discount}</CouponDiscount>
             </Coupon>
-          ))}
+          )) : <p>可憐,沒有任何券</p>}
           </CouponGroup>
         </FormFieldSet>
         <FormFieldSet>
           <FormLegend>我的免運券</FormLegend>
           <DeliveryGroup>
-          {userProfile.data.delivery.map((coupon) => (
-            <Coupon key={coupon.id} onClick={()=>{
+          {userProfile.data.delivery.length !== 0? userProfile.data.delivery.map((coupon) => (
+            <Coupon key={coupon.id} isSelected={coupon.id === selectedDelivery} onClick={()=>{
+              if(coupon.minimum > subtotal){
+                window.alert('不買東西是想賺運費?');
+                return
+              }
               setDeliverDiscount({
                 name:coupon.name,
                 price:coupon.discount,
                 id:coupon.id,
-              })
+              });
+              setSelectedDelivery(coupon.id);
             }}>
-              <CouponTitle category={'delivery'}>免運券</CouponTitle>
                 <CouponContext>
-                  <CouponText>
+                  <CouponTitle>
                     {coupon.name}
-                  </CouponText>
+                  </CouponTitle>
                   <CouponText>
-                    {coupon.description}
-                  </CouponText>
-                  <CouponText>
-                    {coupon.expire_date}
+                    <CouponText>Valid Until</CouponText>
+                    <CouponDate>{coupon.expire_date}</CouponDate>
                   </CouponText>
                 </CouponContext>
-              <CouponDiscount>$ {coupon.discount}</CouponDiscount>
+              <CouponDiscount category={'delivery'}>$ {coupon.discount}</CouponDiscount>
             </Coupon>
-          ))}
+          )) : <p>可憐,沒有任何券</p>}
           </DeliveryGroup>
         </FormFieldSet>
       </CouponSet>
@@ -646,11 +679,22 @@ function Checkout() {
         <GreenPriceValue freightDiscount={deliverDiscount.price}>{freight - deliverDiscount.price}</GreenPriceValue>
       </ShippingPrice>
       <Discount />
+      <ShippingPrice>
+        <MemberPointsCheck>
+          <label htmlFor="scales">會員積分</label>
+          <input type="checkbox" id="scales" name="scales" checked={memberPointChecked} onChange={() => setMemberPointChecked(prev => !prev)}/>
+        </MemberPointsCheck>
+        <MemberPoints>{memberPointChecked? 0 : userProfile.data.points} P</MemberPoints>
+      </ShippingPrice>
       <TotalPrice>
         <PriceName>應付金額</PriceName>
         <Currency>NT.</Currency>
-        <PriceValue>{subtotal + freight - discount.price - deliverDiscount.price}</PriceValue>
+        <PriceValue>{subtotal + freight - discount.price - deliverDiscount.price - (memberPointChecked? userProfile.data.points : 0)}</PriceValue>
       </TotalPrice>
+      <ShippingPrice>
+      <MemberPointsCheck>{userProfile.data.level}會員回饋:</MemberPointsCheck>
+      <MemberPoints>{((subtotal + freight - discount.price - deliverDiscount.price - (memberPointChecked? userProfile.data.points : 0))*(0.01*userProfile.data.points_percent)).toFixed(0)} P</MemberPoints>
+      </ShippingPrice>
       <Button loading={loading} onClick={checkout}>確認付款</Button>
     </Wrapper>
   );

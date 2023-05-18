@@ -22,11 +22,12 @@ export const AuthContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [jwtToken, setJwtToken] = useState();
 
-  const handleLoginResponse = useCallback(async (response) => {
+  const handleLoginResponse = useCallback(async (response,promo) => {
     const accessToken = response.authResponse.accessToken;
     const { data } = await api.signin({
       provider: 'facebook',
       access_token: accessToken,
+      promo: promo.promo,
     });
     const { access_token: tokenFromServer, user: userData } = data;
     setUser(userData);
@@ -43,7 +44,14 @@ export const AuthContextProvider = ({ children }) => {
       if (response.status === 'connected') {
         handleLoginResponse(response);
         setLoading(false);
-      } else {
+      } 
+      // else if (window.localStorage.getItem('jwtToken') !== null ) {
+      //   const {data} = await api.getProfile(window.localStorage.getItem('jwtToken'));
+      //   setUser(data);
+      //   setIsLogin(true);
+      //   setLoading(false);
+      // } 
+      else {
         window.localStorage.removeItem('jwtToken');
         setLoading(false);
       }
@@ -51,11 +59,11 @@ export const AuthContextProvider = ({ children }) => {
     checkAuthStatus();
   }, [handleLoginResponse]);
 
-  const login = async () => {
+  const login = async (promo) => {
     setLoading(true);
     const response = await fb.login();
     if (response.status === 'connected') {
-      const tokenFromServer = handleLoginResponse(response);
+      const tokenFromServer = handleLoginResponse(response,promo);
       setLoading(false);
       return tokenFromServer;
     } else {

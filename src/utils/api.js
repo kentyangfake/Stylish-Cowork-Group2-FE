@@ -54,6 +54,51 @@ const api = {
     const response = await fetch(`${this.hostname}/marketing/coupons`);
     return await response.json();
   },
+  async addCoupon(data, jwtToken) {
+    console.log(JSON.stringify(data));
+    const response = await fetch(`${this.hostname}/admin/coupon`, {
+      body: JSON.stringify(data),
+      headers: new Headers({
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      }),
+      method: 'POST',
+    });
+    return await response.json();
+  },
+  async userGetCoupon(data, jwtToken) {
+    try{
+      const response = await fetch(`${this.hostname}/marketing/coupon`, {
+        body: JSON.stringify(data),
+        headers: new Headers({
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`,
+        }),
+        method: 'POST',
+      });
+      if (response.status === 200) {
+        const status = await response.json();
+        window.alert(status.message);
+        return await status;
+      } else {
+        const error = await response.json();
+        window.alert(error.message);
+        return await error;
+      }
+    } catch (error) {
+      window.alert(error.message);
+    }
+  },
+  async getFuzzySearch(keyword) {
+    const response = await fetch(`${this.hostname}/products/fuzzysearch`, {
+        body: JSON.stringify({'keyword':keyword}),
+        headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      method: 'POST',
+    });
+    return await response.json();
+  },
 };
 
 export default api;
